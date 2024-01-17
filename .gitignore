@@ -1,6 +1,11 @@
-/axi4_lite/*.opt
-/axi4_lite/*.vstf
-/axi4_lite/*.wlf
-/axi4_lite/*.ini
-/axi4_lite/work/
-/axi4_lite/work/*
+*.opt
+*.vstf
+*.wlf
+*.ini
+xil_common_vip_macros.svh
+xil_common_vip_pkg.sv
+axi_vip_pkg.sv
+axi_vip_axi4pc.sv
+axi_vip_if.sv
+xilinx_vip*/
+work*/
