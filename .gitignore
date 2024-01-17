@@ -1,0 +1,6 @@
+/axi4_lite/*.opt
+/axi4_lite/*.vstf
+/axi4_lite/*.wlf
+/axi4_lite/*.ini
+/axi4_lite/work/
+/axi4_lite/work/*
