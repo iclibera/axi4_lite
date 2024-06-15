@@ -14,5 +14,3 @@ vlog -sv example_tb.sv
 
 vsim -voptargs="+acc" -onfinish stop -gui work.example_tb
 run -all
-
-
