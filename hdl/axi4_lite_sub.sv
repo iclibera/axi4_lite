@@ -1,4 +1,4 @@
-module axi_sub #(
+module axi4_lite_sub #(
     parameter int C_AXI_DATA_WIDTH = 32, // Width of the AXI data
     parameter int C_AXI_ADDR_WIDTH = 32  // Width of the AXI address
 )(

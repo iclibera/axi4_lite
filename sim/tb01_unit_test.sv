@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module tb01_test_unit;
+module tb01_unit_test;
     import axi_vip_pkg::*;
     import vip_axi_vip_0_pkg::*;
 
