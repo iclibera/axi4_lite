@@ -2,10 +2,6 @@
 *.vstf
 *.wlf
 *.ini
-xil_common_vip_macros.svh
-xil_common_vip_pkg.sv
-axi_vip_pkg.sv
-axi_vip_axi4pc.sv
-axi_vip_if.sv
 xilinx_vip*/
 work*/
+sim/sim_output/
