@@ -1,6 +1,0 @@
-[submodule "common/axi_vip"]
-	path = common/axi_vip
-	url = git@github.com:iclibera/axi_vip.git
-[submodule "common/svunit"]
-	path = common/svunit
-	url = git@github.com:svunit/svunit.git
