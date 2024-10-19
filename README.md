@@ -10,7 +10,7 @@ vsim -c -do sim/questa/questa.do
 There is an RTL and a testbench file: \
 \
 RTL = `hdl/axi4_lite_sub.sv` \
-Testbench = `sim/tb01_unit_test.sv` \
+Testbench = `sim/testbench.sv` \
 \
 `questa.do` file is run on Questa/ModelSim to create and run a simulation. \
 \

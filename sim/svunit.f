@@ -8,4 +8,4 @@
 ../../common_rtl/axi_vip/hdl/vip_axi_vip_0_pkg.sv
 ../../common_rtl/axi_vip/hdl/vip_axi_vip_0.sv
 ../hdl/axi4_lite_sub.sv
-tb01_unit_test.sv
+testbench.sv

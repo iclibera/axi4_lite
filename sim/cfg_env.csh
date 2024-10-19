@@ -1,4 +1,4 @@
-alias runSVUnit='runSVUnit -s questa -o ./sim_output -r -voptargs=+acc -r -gui -r work.glbl -r "-do ../wave.do" -t tb01_unit_test.sv'
+alias runSVUnit='runSVUnit -s questa -o ./sim_output -r -voptargs=+acc -r -gui -r work.glbl -t testbench.sv'
 git submodule update --init --recursive
 cd ../common_rtl/svunit/
 export SVUNIT_INSTALL=`pwd`
