@@ -1,7 +1,8 @@
 # AXI4-Lite Module and Testbench
 ## Example simulation on Questa/ModelSim
-### On Windows Command Prompt
+### On Windows Command Prompt (assuming QuestaSim/ModelSim installed)
 ```
+git clone https://github.com/iclibera/common_rtl.git
 git clone https://github.com/iclibera/axi4_lite.git
 cd axi4_lite/
 vsim -c -do sim/questa/questa.do
