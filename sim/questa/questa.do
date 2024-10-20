@@ -1,18 +1,25 @@
-# Sets up the directory
+# Sets up the directory / add all the files to be compiled here
+vlog -work work -sv ../common_rtl/axi_vip/hdl/xil_common_vip_macros.svh ../common_rtl/axi_vip/hdl/xil_common_vip_pkg.sv ../common_rtl/axi_vip/hdl/axi_vip_pkg.sv ../common_rtl/axi_vip/hdl/axi_vip_axi4pc.sv ../common_rtl/axi_vip/hdl/axi_vip_if.sv ../common_rtl/axi_vip/hdl/axi_vip_v1_1_vl_rfs.sv ../common_rtl/axi_vip/hdl/vip_axi_vip_0_pkg.sv ../common_rtl/axi_vip/hdl/vip_axi_vip_0.sv ../common_rtl/intf/axi4_if.sv sim/testbench.sv hdl/axi4_lite_sub.sv
+echo "Compilation Complete"
+
+# Loads the simulation
+vopt work.testbench -o optimized_tb +acc
+echo "Simulation loaded"
+
+# Sets simulation library
 vlib work
 
-vlog -work xilinx_vip -incr -mfcu -sv -L axi_vip_v1_1_15 -L xilinx_vip \
-"+incdir+../../common_rtl/axi_vip/hdl/xil_common_vip_macros.svh" \
-"../../common_rtl/axi_vip/hdl/xil_common_vip_pkg.sv" \
-"../../common_rtl/axi_vip/hdl/axi_vip_pkg.sv" \
-"../../common_rtl/axi_vip/hdl/axi_vip_axi4pc.sv" \
-"../../common_rtl/axi_vip/hdl/axi_vip_if.sv" \
-vlog -sv ../../common_rtl/axi_vip/hdl/axi_vip_v1_1_vl_rfs.sv
-vlog -sv ../../common_rtl/axi_vip/hdl/vip_axi_vip_0_pkg.sv
-vlog -sv ../../common_rtl/axi_vip/hdl/vip_axi_vip_0.sv
-vlog -sv ../hdl/axi4_lite_sub.sv
-vlog -sv testbench.sv
-
 # Runs the simulation
-vsim -voptargs="+acc" -onfinish stop -gui work.example_tb
+vsim -vopt optimized_tb
+
+# Applies simulation runtime options
+## add wave -position end -radix unsigned /testbench/
+## add wave -position end -radix unsigned /testbench/*
+# Leaf toggle
+config wave -signalnamewidth 1
+
 run -all
+echo "Simulation run complete"
+
+# stop
+# quit

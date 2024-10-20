@@ -1,143 +1,115 @@
 `timescale 1ns/1ps
 
+import axi_vip_pkg::*;
+import vip_axi_vip_0_pkg::*;
+
 module testbench;
-    import axi_vip_pkg::*;
-    import vip_axi_vip_0_pkg::*;
+// Testbench signals
+logic aclk;
+logic aresetn;
 
-    // Testbench signals
-    logic aclk;
-    logic aresetn;
-    logic [31:0] s_axi_awaddr;
-    logic s_axi_awvalid;
-    logic s_axi_awready;
-    logic [31:0] s_axi_wdata;
-    logic s_axi_wvalid;
-    logic s_axi_wready;
-    logic [1:0] s_axi_bresp;
-    logic s_axi_bvalid;
-    logic s_axi_bready;
-    logic [31:0] s_axi_araddr;
-    logic s_axi_arvalid;
-    logic s_axi_arready;
-    logic [31:0] s_axi_rdata;
-    logic [1:0] s_axi_rresp;
-    logic s_axi_rvalid;
-    logic s_axi_rready;
+localparam DATA_WIDTH = 32;
+localparam ADDR_WIDTH = 32;
 
-    design_1_axi_vip_0_0_mst_t vip_axi_vip_00_mst;
+design_1_axi_vip_0_0_mst_t vip_axi_vip_00_mst;
 
-    localparam xil_axi_resp_t C_EXP_RESP = XIL_AXI_RESP_OKAY;
-    xil_axi_prot_t            prot       = '0;
-    xil_axi_ulong             waddr;
-    xil_axi_resp_t            bresp;
-    logic [31:0]              wdata;
+localparam xil_axi_resp_t C_EXP_RESP = XIL_AXI_RESP_OKAY;
+xil_axi_prot_t            prot       = '0;
+xil_axi_ulong             waddr;
+xil_axi_resp_t            bresp;
+logic [31:0]              wdata;
 
-    xil_axi_ulong             raddr;
-    xil_axi_resp_t            rresp;
-    logic [31:0]              rdata;
-    logic [31:0]              rdata_exp;
+xil_axi_ulong             raddr;
+xil_axi_resp_t            rresp;
+logic [31:0]              rdata;
+logic [31:0]              rdata_exp;
 
-    // Instantiate the AXI module
-    axi_sub axi_slv(
-        .clk(aclk),
-        .resetn(aresetn),
-        .s_axi_araddr(s_axi_araddr),
-        .s_axi_arvalid(s_axi_arvalid),
-        .s_axi_arready(s_axi_arready),
-        .s_axi_rvalid(s_axi_rvalid),
-        .s_axi_rready(s_axi_rready),
-        .s_axi_rdata(s_axi_rdata),
-        .s_axi_rresp(s_axi_rresp),
-        .s_axi_awaddr(s_axi_awaddr),
-        .s_axi_awvalid(s_axi_awvalid),
-        .s_axi_awready(s_axi_awready),
-        .s_axi_wdata(s_axi_wdata),
-        .s_axi_wvalid(s_axi_wvalid),
-        .s_axi_wready(s_axi_wready),
-        .s_axi_bresp(s_axi_bresp),
-        .s_axi_bvalid(s_axi_bvalid),
-        .s_axi_bready(s_axi_bready)
-    );
+axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) axi();
 
-    vip_axi_vip_0 axi_mst(
-        .aclk(aclk),
-        .aresetn(aresetn),
-        .m_axi_awaddr(s_axi_awaddr),
-        .m_axi_awvalid(s_axi_awvalid),
-        .m_axi_awready(s_axi_awready),
-        .m_axi_wdata(s_axi_wdata),
-        .m_axi_wvalid(s_axi_wvalid),
-        .m_axi_wready(s_axi_wready),
-        .m_axi_bresp(s_axi_bresp),
-        .m_axi_bvalid(s_axi_bvalid),
-        .m_axi_bready(s_axi_bready),
-        .m_axi_araddr(s_axi_araddr),
-        .m_axi_arvalid(s_axi_arvalid),
-        .m_axi_arready(s_axi_arready),
-        .m_axi_rdata(s_axi_rdata),
-        .m_axi_rresp(s_axi_rresp),
-        .m_axi_rvalid(s_axi_rvalid),
-        .m_axi_rready(s_axi_rready)
-    );
+// Instantiate the AXI module
+axi4_lite_sub #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH))
+axi_slv (
+  .aclk(aclk),
+  .aresetn(aresetn),
+  .s_axi(axi.subordinate)
+  );
 
-    initial begin : START_vip_axi_vip_0_MASTER
-        vip_axi_vip_00_mst = new("vip_axi_vip_00_mst", tb01_test_unit.axi_mst.inst.IF);
-        vip_axi_vip_00_mst.start_master();
-    end
+vip_axi_vip_0 axi_mst(
+  .aclk(aclk),
+  .aresetn(aresetn),
+  .m_axi_awaddr(axi.awaddr),
+  .m_axi_awvalid(axi.awvalid),
+  .m_axi_awready(axi.awready),
+  .m_axi_wdata(axi.wdata),
+  .m_axi_wvalid(axi.wvalid),
+  .m_axi_wready(axi.wready),
+  .m_axi_bresp(axi.bresp),
+  .m_axi_bvalid(axi.bvalid),
+  .m_axi_bready(axi.bready),
+  .m_axi_araddr(axi.araddr),
+  .m_axi_arvalid(axi.arvalid),
+  .m_axi_arready(axi.arready),
+  .m_axi_rdata(axi.rdata),
+  .m_axi_rresp(axi.rresp),
+  .m_axi_rvalid(axi.rvalid),
+  .m_axi_rready(axi.rready)
+);
 
-    // Clock generation
-    initial begin
-        aclk = 0;
-        forever #5ns aclk = ~aclk; // 100MHz clock
-    end
+initial begin : START_vip_axi_vip_0_MASTER
+  vip_axi_vip_00_mst = new("vip_axi_vip_00_mst", testbench.axi_mst.inst.IF);
+  vip_axi_vip_00_mst.start_master();
+end
 
-    // Reset generation
-    initial begin
-        aresetn = 1'b0;
-        #100us;
-        aresetn = 1'b1;
-    end
+// Clock generation
+initial begin
+  aclk = 0;
+  forever #5ns aclk = ~aclk; // 100MHz clock
+end
 
-    initial begin
-        $display("#READ1");
-        raddr = 32'h0;
-        $display("AXI Read at address: 0x%h", raddr);
-        vip_axi_vip_00_mst.AXI4LITE_READ_BURST(raddr, prot, rdata, rresp);
-        $display("Data read: 0x%h", rdata);
+// Reset generation
+initial begin
+  aresetn = 1'b0;
+  #100us;
+  aresetn = 1'b1;
+end
 
-        $display("#WRITE1");
-        waddr = 32'h0;
-        wdata = 32'hDEAD_BEEF;
-        $display("AXI Write at address: 0x%h with data: 0x%h", waddr, wdata);
-        vip_axi_vip_00_mst.AXI4LITE_WRITE_BURST(waddr, prot, wdata, bresp);
+task readReg (input logic [31:0] regAddr);
+  vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, raddr, rresp);
+  $display("AXI4L read @ address 0x%h : 0x%h", regAddr, raddr);
+endtask
 
-        $display("#READ1");
-        raddr = 32'h0;
-        $display("AXI Read at address: 0x%h", raddr);
-        vip_axi_vip_00_mst.AXI4LITE_READ_BURST(raddr, prot, rdata, rresp);
-        $display("Data read: 0x%h", rdata);
+task readRegReturn (input logic [31:0] regAddr, output logic [31:0] readData);
+  vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, readData, rresp);
+  $display("AXI4L read @ address 0x%h : 0x%h", regAddr, readData);
+endtask
 
+task writeReg (input logic [31:0] regAddr, input logic [31:0] writeData);
+  vip_axi_vip_00_mst.AXI4LITE_WRITE_BURST(regAddr, prot, writeData, rresp);
+  $display("AXI4L write @ address 0x%h : 0x%h", regAddr, writeData);
+endtask
 
-        $display("#READ2");
-        raddr = 32'h20;
-        $display("AXI Read at address: 0x%h", raddr);
-        vip_axi_vip_00_mst.AXI4LITE_READ_BURST(raddr, prot, rdata, rresp);
-        $display("Data read: 0x%h", rdata);
+task compareReg (input logic [31:0] regAddr, input logic [31:0] expectedData);
+  vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, raddr, rresp);
+  assert (raddr == expectedData) begin
+    $display("Check - AXI4L read @ address 0x%h : 0x%h", regAddr, raddr);
+  end else begin
+    $display("Fail - AXI4L read @ address 0x%h : 0x%h - Expected : 0x%h", regAddr, raddr, expectedData);
+  end
+endtask
 
-        $display("#WRITE2");
-        waddr = 32'h20;
-        wdata = 32'hADAD_ABAB;
-        $display("AXI Write at address: 0x%h with data: 0x%h", waddr, wdata);
-        vip_axi_vip_00_mst.AXI4LITE_WRITE_BURST(waddr, prot, wdata, bresp);
+initial begin
+  $display("Read - Write - 1");
+  compareReg(32'h00, 32'h0);
+  writeReg(32'h00, 32'hDEAD_BEEF);
+  compareReg(32'h00, 32'hDEAD_BEEF);
 
-        $display("#READ2");
-        raddr = 32'h20;
-        $display("AXI Read at address: 0x%h", raddr);
-        vip_axi_vip_00_mst.AXI4LITE_READ_BURST(raddr, prot, rdata, rresp);
-        $display("Data read: 0x%h", rdata);
+  $display("Read - Write - 2");
+  compareReg(32'h04, 32'h0);
+  writeReg(32'h04, 32'hADAD_ABAB);
+  compareReg(32'h04, 32'hADAD_ABAB);
 
-        #100us;
-        $finish;
-    end
+  #100us;
+  $finish;
+end
 
 endmodule
