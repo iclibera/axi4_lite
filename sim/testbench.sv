@@ -5,14 +5,16 @@ import vip_axi_vip_0_pkg::*;
 
 module testbench;
 // Testbench signals
-logic aclk;
-logic aresetn;
+logic aclk, aresetn;
 
-localparam DATA_WIDTH = 32;
-localparam ADDR_WIDTH = 32;
+// Localparameters
+localparam int DATA_WIDTH = 32;
+localparam int ADDR_WIDTH = 32;
 
+// Handle for AXI-VIP 
 design_1_axi_vip_0_0_mst_t vip_axi_vip_00_mst;
 
+// AXI VIP control signals
 localparam xil_axi_resp_t C_EXP_RESP = XIL_AXI_RESP_OKAY;
 xil_axi_prot_t            prot       = '0;
 xil_axi_ulong             waddr;
@@ -24,6 +26,7 @@ xil_axi_resp_t            rresp;
 logic [31:0]              rdata;
 logic [31:0]              rdata_exp;
 
+// AXI interface
 axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) axi();
 
 // Instantiate the AXI module
@@ -34,6 +37,8 @@ axi_slv (
   .s_axi(axi.subordinate)
   );
 
+// AXI VIP parameters are fixed in the source files
+// Parameters can be altered from source files
 vip_axi_vip_0 axi_mst(
   .aclk(aclk),
   .aresetn(aresetn),
@@ -63,16 +68,19 @@ end
 // Clock generation
 initial begin
   aclk = 0;
-  forever #5ns aclk = ~aclk; // 100MHz clock
+  forever #2ns aclk = ~aclk; // 100MHz clock
 end
 
-// Reset generation
-initial begin
-  aresetn = 1'b0;
-  #100us;
+// Active-low reset generation tasks
+task deassertReset();
   aresetn = 1'b1;
-end
+endtask
 
+task assertReset();
+  aresetn = 1'b0;
+endtask
+
+// Necessary tasks
 task readReg (input logic [31:0] regAddr);
   vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, raddr, rresp);
   $display("AXI4L read @ address 0x%h : 0x%h", regAddr, raddr);
@@ -97,7 +105,12 @@ task compareReg (input logic [31:0] regAddr, input logic [31:0] expectedData);
   end
 endtask
 
+// Simulation
 initial begin
+  assertReset();
+  #20us;
+  deassertReset();
+
   $display("Read - Write - 1");
   compareReg(32'h00, 32'h0);
   writeReg(32'h00, 32'hDEAD_BEEF);
@@ -108,7 +121,23 @@ initial begin
   writeReg(32'h04, 32'hADAD_ABAB);
   compareReg(32'h04, 32'hADAD_ABAB);
 
-  #100us;
+  assertReset();
+  #20us;
+  deassertReset();
+
+  $display("Read - Write - 3");
+  compareReg(32'h00, 32'h0);
+  writeReg(32'h00, 32'hBEBE_BABA);
+  compareReg(32'h00, 32'hBEBE_BABA);
+
+  $display("Read - Write - 4");
+  compareReg(32'h04, 32'h0);
+  writeReg(32'h04, 32'hDADA_BBBB);
+  compareReg(32'h04, 32'hDADA_BBBB);
+
+  assertReset();
+
+  #50us;
   $finish;
 end
 
