@@ -16,7 +16,8 @@ Testbench = `sim/testbench.sv` \
 \
 Testbench wraps RTL files. \
 \
-The simulation scripts assumes common_rtl repository lives on the same directory as axi4_lite does. Current version of AXI4-Lite testbench runs on 250MHz AXI clock \
+The simulation scripts assumes common_rtl repository lives on the same directory as axi4_lite does. \
+Current version of AXI4-Lite testbench runs on 250MHz AXI clock \
 \
 NOT IN THIS VERSION: \
 To randomize AXI clock frequency, apply different seed values to the simulator (via -sv_seed = $random or such).
