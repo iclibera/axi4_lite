@@ -19,7 +19,7 @@ Testbench wraps RTL files. \
 The simulation scripts assumes common_rtl repository lives on the same directory as axi4_lite does. Current version of AXI4-Lite testbench runs on 250MHz AXI clock \
 \
 NOT IN THIS VERSION: \
-In order to change the random set of clock periods, apply different seed values to the simulator (via -sv_seed = $random or such). \
-\
+To randomize AXI clock frequency, apply different seed values to the simulator (via -sv_seed = $random or such). \
+
 ## Simulation on Verilator / XSim (Vivado Simulator)
 Not supported yet.
