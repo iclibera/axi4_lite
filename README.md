@@ -1,7 +1,7 @@
 # AXI4-Lite Manager/Subordinate and Testbench
 The modules and testbench are all SystemVerilog. Working proven against AMD AXI-VIP. \
-Read 4 clock cycles \ 
-Write 5 clock cycles
+Read 4 clock cycles \ Write 5 clock cycles
+
 ## Simulation on Questa/ModelSim
 ```
 git clone --recurse-submodules https://github.com/iclibera/common_rtl.git
@@ -20,7 +20,7 @@ Testbench = `sim/testbench.sv` \
 Testbench wraps RTL files. \
 \
 The simulation scripts assumes common_rtl repository lives on the same directory as axi4_lite does. \
-Current version of AXI4-Lite testbench runs on 250MHz AXI clock \
+Current version of AXI4-Lite testbench runs on 250MHz AXI clock. \
 \
 NOT IN THIS VERSION: \
 To randomize AXI clock frequency, apply different seed values to the simulator (via -sv_seed = $random or such).
