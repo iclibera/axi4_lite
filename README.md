@@ -1,4 +1,7 @@
-# AXI4-Lite Module and Testbench
+# AXI4-Lite Manager/Subordinate and Testbench
+The modules and testbench are all SystemVerilog. Working proven against AMD AXI-VIP. \
+Read 4 clock cycles \ 
+Write 5 clock cycles
 ## Simulation on Questa/ModelSim
 ```
 git clone --recurse-submodules https://github.com/iclibera/common_rtl.git
