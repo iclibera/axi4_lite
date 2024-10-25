@@ -1,10 +1,10 @@
 module axi4_lite_sub #(
-parameter int DATA_WIDTH = 32, // Width of the AXI data
-parameter int ADDR_WIDTH = 32  // Width of the AXI address
+  parameter int DATA_WIDTH = 32, // Width of the AXI data
+  parameter int ADDR_WIDTH = 32  // Width of the AXI address
 )(
-input logic         aclk,
-input logic         aresetn,
-axi4_if.subordinate s_axi
+  input logic         aclk,
+  input logic         aresetn,
+  axi4_if.subordinate s_axi
 );
 
 typedef enum logic [1:0] {
@@ -37,6 +37,7 @@ logic [ADDR_WIDTH-1:0] REG_ADDR_6 = ADDR_WIDTH'('h18);
 logic [ADDR_WIDTH-1:0] REG_ADDR_7 = ADDR_WIDTH'('h1C);
 
 logic [DATA_WIDTH-1:0] default_value  = ADDR_WIDTH'('b0);
+logic [DATA_WIDTH-1:0] data0 = ADDR_WIDTH'('b0);
 logic [DATA_WIDTH-1:0] data1 = ADDR_WIDTH'('b0);
 logic [DATA_WIDTH-1:0] data2 = ADDR_WIDTH'('b0);
 logic [DATA_WIDTH-1:0] data3 = ADDR_WIDTH'('b0);
@@ -61,8 +62,14 @@ always_ff @(posedge aclk or negedge aresetn) begin
         s_axi.arready <= 1'b0;
         if (s_axi.rready) begin
           case (read_address)
-            REG_ADDR_0: s_axi.rdata <= data1;
-            REG_ADDR_1: s_axi.rdata <= data2;
+            REG_ADDR_0: s_axi.rdata <= data0;
+            REG_ADDR_1: s_axi.rdata <= data1;
+            REG_ADDR_2: s_axi.rdata <= data2;
+            REG_ADDR_3: s_axi.rdata <= data3;
+            REG_ADDR_4: s_axi.rdata <= data4;
+            REG_ADDR_5: s_axi.rdata <= data5;
+            REG_ADDR_6: s_axi.rdata <= data6;
+            REG_ADDR_7: s_axi.rdata <= data7;
             default: s_axi.rdata <= ADDR_WIDTH'('b0);
           endcase
           s_axi.rvalid <= 1'b1;
@@ -80,7 +87,10 @@ always_ff @(posedge aclk or negedge aresetn) begin
           read_progress <= ST_RD_ADDR;
         end
       end
-      default: s_axi.rdata <= 32'b0;
+      default: begin
+        read_progress <= ST_RD_ADDR;
+        s_axi.rdata   <= 32'b0;
+      end
     endcase
 
     case(write_progress)
@@ -97,8 +107,14 @@ always_ff @(posedge aclk or negedge aresetn) begin
           if (s_axi.wvalid) begin
             s_axi.wready <= 1'b1;
             case(write_address)
-              REG_ADDR_0: data1 <= s_axi.wdata;
-              REG_ADDR_1: data2 <= s_axi.wdata;
+              REG_ADDR_0: data0 <= s_axi.wdata;
+              REG_ADDR_1: data1 <= s_axi.wdata;
+              REG_ADDR_2: data2 <= s_axi.wdata;
+              REG_ADDR_3: data3 <= s_axi.wdata;
+              REG_ADDR_4: data4 <= s_axi.wdata;
+              REG_ADDR_5: data5 <= s_axi.wdata;
+              REG_ADDR_6: data6 <= s_axi.wdata;
+              REG_ADDR_7: data7 <= s_axi.wdata;
               default: default_value <= s_axi.wdata;
             endcase
             write_progress <= ST_WR_DATA_2;
@@ -117,7 +133,10 @@ always_ff @(posedge aclk or negedge aresetn) begin
           s_axi.bvalid <= 1'b0;
           write_progress <= ST_WR_ADDR;
         end
-        default: default_value <= s_axi.wdata;
+        default: begin
+          write_progress <= ST_WR_ADDR;
+          default_value  <= s_axi.wdata;
+        end
     endcase
   end
   else begin
