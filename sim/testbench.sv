@@ -19,12 +19,12 @@ localparam xil_axi_resp_t C_EXP_RESP = XIL_AXI_RESP_OKAY;
 xil_axi_prot_t            prot       = '0;
 xil_axi_ulong             waddr;
 xil_axi_resp_t            bresp;
-logic [31:0]              wdata;
+logic [DATA_WIDTH-1:0]    wdata;
 
 xil_axi_ulong             raddr;
 xil_axi_resp_t            rresp;
-logic [31:0]              rdata;
-logic [31:0]              rdata_exp;
+logic [DATA_WIDTH-1:0]    rdata;
+logic [DATA_WIDTH-1:0]    rdata_exp;
 
 // AXI interface
 axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) axi();
@@ -82,26 +82,26 @@ endtask
 
 // Necessary tasks
 task readReg (input logic [31:0] regAddr);
-  vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, raddr, rresp);
-  $display("AXI4L read @ address 0x%h : 0x%h", regAddr, raddr);
+  vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, rdata, rresp);
+  $display("Process - AXI4L read  @ address 0x%h : 0x%h", regAddr, rdata);
 endtask
 
 task readRegReturn (input logic [31:0] regAddr, output logic [31:0] readData);
   vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, readData, rresp);
-  $display("AXI4L read @ address 0x%h : 0x%h", regAddr, readData);
+  $display("Process - AXI4L read  @ address 0x%h : 0x%h", regAddr, readData);
 endtask
 
 task writeReg (input logic [31:0] regAddr, input logic [31:0] writeData);
   vip_axi_vip_00_mst.AXI4LITE_WRITE_BURST(regAddr, prot, writeData, rresp);
-  $display("AXI4L write @ address 0x%h : 0x%h", regAddr, writeData);
+  $display("Process - AXI4L write @ address 0x%h : 0x%h", regAddr, writeData);
 endtask
 
 task compareReg (input logic [31:0] regAddr, input logic [31:0] expectedData);
-  vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, raddr, rresp);
-  assert (raddr == expectedData) begin
-    $display("Check - AXI4L read @ address 0x%h : 0x%h", regAddr, raddr);
+  vip_axi_vip_00_mst.AXI4LITE_READ_BURST(regAddr, prot, rdata, rresp);
+  assert (rdata == expectedData) begin
+    $display("Check   - AXI4L read  @ address 0x%h : 0x%h", regAddr, rdata);
   end else begin
-    $display("Fail - AXI4L read @ address 0x%h : 0x%h - Expected : 0x%h", regAddr, raddr, expectedData);
+    $display("Fail    - AXI4L read  @ address 0x%h : 0x%h - Expected : 0x%h", regAddr, rdata, expectedData);
   end
 endtask
 
