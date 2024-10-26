@@ -1,5 +1,5 @@
 # Sets up the directory / add all the files to be compiled here
-vlog -work work -sv ../common_rtl/axi_vip/hdl/xil_common_vip_macros.svh ../common_rtl/axi_vip/hdl/xil_common_vip_pkg.sv ../common_rtl/axi_vip/hdl/axi_vip_pkg.sv ../common_rtl/axi_vip/hdl/axi_vip_axi4pc.sv ../common_rtl/axi_vip/hdl/axi_vip_if.sv ../common_rtl/axi_vip/hdl/axi_vip_v1_1_vl_rfs.sv ../common_rtl/axi_vip/hdl/vip_axi_vip_0_pkg.sv ../common_rtl/axi_vip/hdl/vip_axi_vip_0.sv ../common_rtl/intf/axi4_if.sv sim/testbench.sv hdl/axi4_lite_sub.sv
+vlog -work work -sv ../common_rtl/axi_vip/hdl/xil_common_vip_macros.svh ../common_rtl/axi_vip/hdl/xil_common_vip_pkg.sv ../common_rtl/axi_vip/hdl/axi_vip_pkg.sv ../common_rtl/axi_vip/hdl/axi_vip_axi4pc.sv ../common_rtl/axi_vip/hdl/axi_vip_if.sv ../common_rtl/axi_vip/hdl/axi_vip_v1_1_vl_rfs.sv ../common_rtl/axi_vip/hdl/vip_axi_vip_0_pkg.sv ../common_rtl/axi_vip/hdl/vip_axi_vip_0.sv ../common_rtl/intf/axi4_if.sv sim/testbench.sv hdl/axi4_lite.sv
 echo "Compilation Complete"
 
 # Loads the simulation

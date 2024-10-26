@@ -8,10 +8,11 @@ module testbench;
 logic aclk, aresetn;
 
 // Localparameters
+localparam int SELECT_DIR = 1;
 localparam int DATA_WIDTH = 32;
 localparam int ADDR_WIDTH = 32;
 
-// Handle for AXI-VIP 
+// Handle for AXI-VIP
 design_1_axi_vip_0_0_mst_t vip_axi_vip_00_mst;
 
 // AXI VIP control signals
@@ -27,14 +28,16 @@ logic [DATA_WIDTH-1:0]    rdata;
 logic [DATA_WIDTH-1:0]    rdata_exp;
 
 // AXI interface
-axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) axi();
+axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) m_axi();
+axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) s_axi();
 
 // Instantiate the AXI module
-axi4_lite_sub #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH))
-axi_slv (
+axi4_lite #(.SELECT_DIR(SELECT_DIR), .DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH))
+axi_inst (
   .aclk(aclk),
   .aresetn(aresetn),
-  .s_axi(axi.subordinate)
+  .m_axi(m_axi.manager),
+  .s_axi(s_axi.subordinate)
   );
 
 // AXI VIP parameters are fixed in the source files
@@ -42,22 +45,22 @@ axi_slv (
 vip_axi_vip_0 axi_mst(
   .aclk(aclk),
   .aresetn(aresetn),
-  .m_axi_awaddr(axi.awaddr),
-  .m_axi_awvalid(axi.awvalid),
-  .m_axi_awready(axi.awready),
-  .m_axi_wdata(axi.wdata),
-  .m_axi_wvalid(axi.wvalid),
-  .m_axi_wready(axi.wready),
-  .m_axi_bresp(axi.bresp),
-  .m_axi_bvalid(axi.bvalid),
-  .m_axi_bready(axi.bready),
-  .m_axi_araddr(axi.araddr),
-  .m_axi_arvalid(axi.arvalid),
-  .m_axi_arready(axi.arready),
-  .m_axi_rdata(axi.rdata),
-  .m_axi_rresp(axi.rresp),
-  .m_axi_rvalid(axi.rvalid),
-  .m_axi_rready(axi.rready)
+  .m_axi_awaddr(s_axi.awaddr),
+  .m_axi_awvalid(s_axi.awvalid),
+  .m_axi_awready(s_axi.awready),
+  .m_axi_wdata(s_axi.wdata),
+  .m_axi_wvalid(s_axi.wvalid),
+  .m_axi_wready(s_axi.wready),
+  .m_axi_bresp(s_axi.bresp),
+  .m_axi_bvalid(s_axi.bvalid),
+  .m_axi_bready(s_axi.bready),
+  .m_axi_araddr(s_axi.araddr),
+  .m_axi_arvalid(s_axi.arvalid),
+  .m_axi_arready(s_axi.arready),
+  .m_axi_rdata(s_axi.rdata),
+  .m_axi_rresp(s_axi.rresp),
+  .m_axi_rvalid(s_axi.rvalid),
+  .m_axi_rready(s_axi.rready)
 );
 
 initial begin : START_vip_axi_vip_0_MASTER
