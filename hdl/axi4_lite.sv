@@ -187,4 +187,4 @@ if (SELECT_DIR == 1 || SELECT_DIR == 2) begin
     end
   end
 end
-endmodule
+endmodule : axi4_lite
