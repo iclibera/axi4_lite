@@ -28,16 +28,14 @@ logic [DATA_WIDTH-1:0]    rdata;
 logic [DATA_WIDTH-1:0]    rdata_exp;
 
 // AXI interface
-axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) m_axi();
-axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) s_axi();
+axi4_if #(.DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH)) axi_if();
 
 // Instantiate the AXI module
 axi4_lite #(.SELECT_DIR(SELECT_DIR), .DATA_WIDTH(DATA_WIDTH), .ADDR_WIDTH(ADDR_WIDTH))
 axi_inst (
   .aclk(aclk),
   .aresetn(aresetn),
-  .m_axi(m_axi.manager),
-  .s_axi(s_axi.subordinate)
+  .axi_if(axi_if.subordinate)
   );
 
 // AXI VIP parameters are fixed in the source files
@@ -45,22 +43,22 @@ axi_inst (
 vip_axi_vip_0 axi_mst(
   .aclk(aclk),
   .aresetn(aresetn),
-  .m_axi_awaddr(s_axi.awaddr),
-  .m_axi_awvalid(s_axi.awvalid),
-  .m_axi_awready(s_axi.awready),
-  .m_axi_wdata(s_axi.wdata),
-  .m_axi_wvalid(s_axi.wvalid),
-  .m_axi_wready(s_axi.wready),
-  .m_axi_bresp(s_axi.bresp),
-  .m_axi_bvalid(s_axi.bvalid),
-  .m_axi_bready(s_axi.bready),
-  .m_axi_araddr(s_axi.araddr),
-  .m_axi_arvalid(s_axi.arvalid),
-  .m_axi_arready(s_axi.arready),
-  .m_axi_rdata(s_axi.rdata),
-  .m_axi_rresp(s_axi.rresp),
-  .m_axi_rvalid(s_axi.rvalid),
-  .m_axi_rready(s_axi.rready)
+  .m_axi_awaddr(axi_if.awaddr),
+  .m_axi_awvalid(axi_if.awvalid),
+  .m_axi_awready(axi_if.awready),
+  .m_axi_wdata(axi_if.wdata),
+  .m_axi_wvalid(axi_if.wvalid),
+  .m_axi_wready(axi_if.wready),
+  .m_axi_bresp(axi_if.bresp),
+  .m_axi_bvalid(axi_if.bvalid),
+  .m_axi_bready(axi_if.bready),
+  .m_axi_araddr(axi_if.araddr),
+  .m_axi_arvalid(axi_if.arvalid),
+  .m_axi_arready(axi_if.arready),
+  .m_axi_rdata(axi_if.rdata),
+  .m_axi_rresp(axi_if.rresp),
+  .m_axi_rvalid(axi_if.rvalid),
+  .m_axi_rready(axi_if.rready)
 );
 
 initial begin : START_vip_axi_vip_0_MASTER
