@@ -9,7 +9,7 @@ module axi4_lite #(
 );
 
 typedef enum logic [1:0] {ST_PROC = 2'b00, ST_COMP = 2'b01, ST_RDY  = 2'b10} axi_states_e;
-(* keep = "true" *) axi_states_e rd_man_prgrss_d, rd_man_prgrss, wr_man_prgrss, rd_sub_prgrss, wr_sub_prgrss;
+(* keep = "true" *) axi_states_e rd_man_prgrss, wr_man_prgrss, rd_sub_prgrss, wr_sub_prgrss;
 
 // Address space and data registers
            logic [ADDR_WIDTH-1:0] REG_ADDR;
@@ -25,85 +25,78 @@ localparam logic [ADDR_WIDTH-1:0] REG_ADDR_7 = ADDR_WIDTH'('h1C);
 // AXI4-Lite manager to be implemented
 if (SELECT_DIR == 0) begin
   logic [DATA_WIDTH-1:0] m_rd_data, m_wr_data;
-  logic [2:0] m_controller;
-  logic reg_man_read;
 
-  // Manager controller
+  //////////////////////////////////////////////////////////////////////////
+  // Manager controller / Test Purpose RTL
+  logic [2:0] m_controller;
+  logic man_wr_done;
+
   always_ff @(posedge aclk or negedge aresetn) begin
     if (aresetn) begin
       case (m_controller)
         3'd0: begin
-          reg_man_read <= 1'b1;
-          REG_ADDR     <= REG_ADDR_0;
+          REG_ADDR     <= REG_ADDR_1;
           m_controller <= 3'd1;
           $display("#1");
         end
         3'd1: begin
-          REG_ADDR     <= REG_ADDR_1;
-          if ((rd_man_prgrss == ST_PROC) && (rd_man_prgrss_d == ST_COMP)) begin
+          if (man_wr_done) begin
+            REG_ADDR     <= REG_ADDR_2;
             m_controller <= 3'd2;
             $display("#2");
           end
         end
         3'd2: begin
-          REG_ADDR     <= REG_ADDR_2;
-          if ((rd_man_prgrss == ST_PROC) && (rd_man_prgrss_d == ST_COMP)) begin
+          if (man_wr_done) begin
+            REG_ADDR     <= REG_ADDR_3;
             m_controller <= 3'd3;
             $display("#3");
           end
         end
         3'd3: begin
-          REG_ADDR     <= REG_ADDR_3;
-          if ((rd_man_prgrss == ST_PROC) && (rd_man_prgrss_d == ST_COMP)) begin
+          if (man_wr_done) begin
+            REG_ADDR     <= REG_ADDR_4;
             m_controller <= 3'd4;
             $display("#4");
           end
         end
         3'd4: begin
-          REG_ADDR     <= REG_ADDR_4;
-          if ((rd_man_prgrss == ST_PROC) && (rd_man_prgrss_d == ST_COMP)) begin
+          if (man_wr_done) begin
+            REG_ADDR     <= REG_ADDR_5;
             m_controller <= 3'd5;
             $display("#5");
           end
         end
         3'd5: begin
-          REG_ADDR     <= REG_ADDR_5;
-          if ((rd_man_prgrss == ST_PROC) && (rd_man_prgrss_d == ST_COMP)) begin
+          if (man_wr_done) begin
+            REG_ADDR     <= REG_ADDR_6;
             m_controller <= 3'd6;
             $display("#6");
           end
         end
         3'd6: begin
-          REG_ADDR     <= REG_ADDR_6;
-          if ((rd_man_prgrss == ST_PROC) && (rd_man_prgrss_d == ST_COMP)) begin
+          if (man_wr_done) begin
+            REG_ADDR     <= REG_ADDR_7;
             m_controller <= 3'd7;
             $display("#7");
-          end
-        end
-        3'd7: begin
-          REG_ADDR     <= REG_ADDR_7;
-          if ((rd_man_prgrss == ST_PROC) && (rd_man_prgrss_d == ST_COMP)) begin
-            reg_man_read <= 1'b0;
-            m_controller <= 3'd7;
-            $display("#8");
           end
         end
       endcase
     end else begin
       m_controller <= 3'd0;
       REG_ADDR     <= REG_ADDR_0;
-      reg_man_read <= 1'b0;
     end
   end
+  //////////////////////////////////////////////////////////////////////////
 
   // Always FF block comes out of reset synchronously, resets asynchronously
   always_ff @(posedge aclk or negedge aresetn) begin
     if (aresetn) begin
-      rd_man_prgrss_d <= rd_man_prgrss;
       // AXI4-Lite read
       case (rd_man_prgrss)
         ST_PROC: begin
-          if (reg_man_read) begin
+          man_wr_done    <= 1'b0;
+          if (m_controller != 3'd7) begin
             axi_if.rready  <= 1'b0;
             axi_if.araddr  <= REG_ADDR;  // Assign respective address
             axi_if.arvalid <= 1'b1;
@@ -117,6 +110,7 @@ if (SELECT_DIR == 0) begin
           if (axi_if.rvalid && !axi_if.rresp) begin
             m_rd_data     <= axi_if.rdata;   // Assign respective data
             axi_if.rready <= 1'b0;
+            man_wr_done <= 1'b1;
             $display("READ DATA: %h", axi_if.rdata);
             rd_man_prgrss <= ST_PROC;
           end
@@ -206,9 +200,9 @@ if (SELECT_DIR == 1) begin
               REG_ADDR_1: axi_if.rdata <= 32'hCECE_BBBB; // register_content_1;
               REG_ADDR_2: axi_if.rdata <= 32'hABCD_DEFA; // register_content_2;
               REG_ADDR_3: axi_if.rdata <= 32'hABAB_DEDE; // register_content_3;
-              REG_ADDR_4: axi_if.rdata <= 32'hABAB_DEDE; // register_content_4;
-              REG_ADDR_5: axi_if.rdata <= 32'hABAB_DEDE; // register_content_5;
-              REG_ADDR_6: axi_if.rdata <= 32'hABAB_DEDE; // register_content_6;
+              REG_ADDR_4: axi_if.rdata <= 32'hFFEE_EEFF; // register_content_4;
+              REG_ADDR_5: axi_if.rdata <= 32'hEEEE_FFFF; // register_content_5;
+              REG_ADDR_6: axi_if.rdata <= 32'hDDDD_AAAA; // register_content_6;
               REG_ADDR_7: axi_if.rdata <= 32'hFBCE_BBBA; // register_content_7;
               default: axi_if.rdata <= DATA_WIDTH'('b0);
             endcase
